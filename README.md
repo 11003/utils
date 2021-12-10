@@ -65,8 +65,8 @@ export const getDayText = (date = new Date()) => {
  * @returns {string}
  */
 export const greetTime = () => {
-        const time = new Date()
-        const hour = time.getHours()
+        const time = new Date();
+        const hour = time.getHours();
         return hour < 9 ? '早上好' : hour <= 11 ? '上午好' : hour <= 13 ? '中午好' : hour < 20 ? '下午好' : '晚上好'
     }
 ```
@@ -388,7 +388,7 @@ export function setHistoryList(item) {
 methods: {
     toggle:debounce(() => {
         console.log('防抖')
-    },1000)
+    }, 1000)
 }
 ```
 
@@ -401,38 +401,38 @@ methods: {
  * @returns {function(...[*]=): *}
  */
 export function debounce(func, wait, immediate) {
-  let timeout, args, context, timestamp, result
+    let timeout, args, context, timestamp, result
 
-  const later = function() {
-    // 据上一次触发时间间隔
-    const last = +new Date() - timestamp
+    const later = function () {
+        // 据上一次触发时间间隔
+        const last = +new Date() - timestamp
 
-    // 上次被包装函数被调用时间间隔 last 小于设定时间间隔 wait
-    if (last < wait && last > 0) {
-      timeout = setTimeout(later, wait - last)
-    } else {
-      timeout = null
-      // 如果设定为immediate===true，因为开始边界已经调用过了此处无需调用
-      if (!immediate) {
-        result = func.apply(context, args)
-        if (!timeout) context = args = null
-      }
-    }
-  }
-
-  return function(...args) {
-    context = this
-    timestamp = +new Date()
-    const callNow = immediate && !timeout
-    // 如果延时不存在，重新设定延时
-    if (!timeout) timeout = setTimeout(later, wait)
-    if (callNow) {
-      result = func.apply(context, args)
-      context = args = null
+        // 上次被包装函数被调用时间间隔 last 小于设定时间间隔 wait
+        if (last < wait && last > 0) {
+            timeout = setTimeout(later, wait - last)
+        } else {
+            timeout = null
+            // 如果设定为immediate===true，因为开始边界已经调用过了此处无需调用
+            if (!immediate) {
+                result = func.apply(context, args)
+                if (!timeout) context = args = null
+            }
+        }
     }
 
-    return result
-  }
+    return function (...args) {
+        context = this
+        timestamp = +new Date()
+        const callNow = immediate && !timeout
+        // 如果延时不存在，重新设定延时
+        if (!timeout) timeout = setTimeout(later, wait)
+        if (callNow) {
+            result = func.apply(context, args)
+            context = args = null
+        }
+
+        return result
+    }
 }
 ```
 
@@ -452,18 +452,18 @@ getQueryObject() // {a:123}
  * @returns {{}}
  */
 export function getQueryObject(url) {
-  url = url == null ? window.location.href : url
-  const search = url.substring(url.lastIndexOf('?') + 1)
-  const obj = {}
-  const reg = /([^?&=]+)=([^?&=]*)/g
-  search.replace(reg, (rs, $1, $2) => {
-    const name = decodeURIComponent($1)
-    let val = decodeURIComponent($2)
-    val = String(val)
-    obj[name] = val
-    return rs
-  })
-  return obj
+    url = url == null ? window.location.href : url
+    const search = url.substring(url.lastIndexOf('?') + 1)
+    const obj = {}
+    const reg = /([^?&=]+)=([^?&=]*)/g
+    search.replace(reg, (rs, $1, $2) => {
+        const name = decodeURIComponent($1)
+        let val = decodeURIComponent($2)
+        val = String(val)
+        obj[name] = val
+        return rs
+    })
+    return obj
 }
 ```
 
@@ -477,15 +477,15 @@ export function getQueryObject(url) {
  * @returns {File}
  */
 export function dataURLtoFile(url, filename) {
-  let arr = url.split(",")
-  let mime = arr[0].match(/:(.*?);/)[1]
-  let bstr = atob(arr[1])
-  let n = bstr.length
-  let u8arr = new Uint8Array(n)
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n)
-  }
-  return new File([u8arr], filename, { type: mime })
+    let arr = url.split(",")
+    let mime = arr[0].match(/:(.*?);/)[1]
+    let bstr = atob(arr[1])
+    let n = bstr.length
+    let u8arr = new Uint8Array(n)
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new File([u8arr], filename, {type: mime})
 }
 ```
 
@@ -499,19 +499,19 @@ export function dataURLtoFile(url, filename) {
  * @param outputFormat
  */
 export function getImgToBase64(url, callback, outputFormat) {
-  let canvas = document.createElement("canvas")
-  let ctx = canvas.getContext("2d")
-  let img = new Image()
-  img.crossOrigin = "Anonymous"
-  img.onload = function () {
-    canvas.height = img.height
-    canvas.width = img.width
-    ctx.drawImage(img, 0, 0)
-    let dataURL = canvas.toDataURL(outputFormat || "image/png")
-    callback(dataURL)
-    canvas = null
-  }
-  img.src = url
+    let canvas = document.createElement("canvas")
+    let ctx = canvas.getContext("2d")
+    let img = new Image()
+    img.crossOrigin = "Anonymous"
+    img.onload = function () {
+        canvas.height = img.height
+        canvas.width = img.width
+        ctx.drawImage(img, 0, 0)
+        let dataURL = canvas.toDataURL(outputFormat || "image/png")
+        callback(dataURL)
+        canvas = null
+    }
+    img.src = url
 }
 ```
 
@@ -546,14 +546,13 @@ newData: [
  * @param arr
  * @returns {*}
  */
-export function convertKey (arr) {
+export function convertKey(arr) {
     return arr.map(item => ({
         label: item.name,
         value: item.code
     }))
 }
 ```
-
 
 ## DOM类
 
@@ -562,7 +561,8 @@ export function convertKey (arr) {
 别名：滚动到某个div
 
 ```js
-goTo() {
+goTo()
+{
     goToDom(document.querySelector('#contentTop'), 0);
 }
 ```
@@ -594,7 +594,8 @@ export function goToDom(toEl, n) {
 别名：切换class
 
 ```js
-toggle() {
+toggle()
+{
     toggleClass(document.body, 'dark')
 }
 ```
@@ -606,22 +607,21 @@ toggle() {
  * @param className
  */
 export function toggleClass(element, className) {
-  if (!element || !className) {
-    return
-  }
-  let classString = element.className
-  const nameIndex = classString.indexOf(className)
-  if (nameIndex === -1) {
-    classString += '' + className
-  } else {
-    classString =
-      classString.substr(0, nameIndex) +
-      classString.substr(nameIndex + className.length)
-  }
-  element.className = classString
+    if (!element || !className) {
+        return
+    }
+    let classString = element.className
+    const nameIndex = classString.indexOf(className)
+    if (nameIndex === -1) {
+        classString += '' + className
+    } else {
+        classString =
+            classString.substr(0, nameIndex) +
+            classString.substr(nameIndex + className.length)
+    }
+    element.className = classString
 }
 ```
-
 
 ### 判断是否存在Class
 
@@ -635,7 +635,7 @@ export function toggleClass(element, className) {
  * @returns {boolean}
  */
 export function hasClass(ele, cls) {
-  return !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'))
+    return !!ele.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'))
 }
 ```
 
@@ -648,7 +648,7 @@ export function hasClass(ele, cls) {
  * @param cls class名
  */
 export function addClass(ele, cls) {
-  if (!hasClass(ele, cls)) ele.className += ' ' + cls
+    if (!hasClass(ele, cls)) ele.className += ' ' + cls
 }
 ```
 
@@ -661,9 +661,9 @@ export function addClass(ele, cls) {
  * @param cls class名
  */
 export function removeClass(ele, cls) {
-  if (hasClass(ele, cls)) {
-    const reg = new RegExp('(\\s|^)' + cls + '(\\s|$)')
-    ele.className = ele.className.replace(reg, ' ')
-  }
+    if (hasClass(ele, cls)) {
+        const reg = new RegExp('(\\s|^)' + cls + '(\\s|$)')
+        ele.className = ele.className.replace(reg, ' ')
+    }
 }
 ```
