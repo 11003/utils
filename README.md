@@ -313,34 +313,34 @@ loadScript('css', 'xxx.css').then(() => {
  * @param url 资源地址
  * @returns {Promise<unknown>}
  */
-export const loadScript = (type = 'js', url) => {
-        let flag = false;
-        return new Promise((resolve) => {
-            const head = document.getElementsByTagName('head')[0];
-            head.children.forEach(ele => {
-                if ((ele.src || '').indexOf(url) !== -1) {
-                    flag = true;
-                    resolve();
-                }
-            });
-            if (flag) return;
-            let script;
-            if (type === 'js') {
-                script = document.createElement('script');
-                script.type = 'text/javascript';
-                script.src = url;
-            } else if (type === 'css') {
-                script = document.createElement('link');
-                script.rel = 'stylesheet';
-                script.type = 'text/css';
-                script.href = url;
-            }
-            head.appendChild(script);
-            script.onload = function () {
+export function loadScript(type = 'js', url) {
+    let flag = false;
+    return new Promise((resolve) => {
+        const head = document.getElementsByTagName('head')[0];
+        head.children.forEach(ele => {
+            if ((ele.src || '').indexOf(url) !== -1) {
+                flag = true;
                 resolve();
-            };
+            }
         });
-    };
+        if (flag) return;
+        let script;
+        if (type === 'js') {
+            script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = url;
+        } else if (type === 'css') {
+            script = document.createElement('link');
+            script.rel = 'stylesheet';
+            script.type = 'text/css';
+            script.href = url;
+        }
+        head.appendChild(script);
+        script.onload = function () {
+            resolve();
+        };
+    });
+};
 ```
 
 ### 历史记录
