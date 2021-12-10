@@ -1,16 +1,10 @@
-### 使用方法
+## 使用方法
 
 ```
 import { 方法名称 } from "@/utils";
 ```
 
-<details>
-<summary>123</summary>
-
-```java
-import(这里是代码区域)
-```
-</details>
+## 工具类
 
 ### 时间格式化
 
