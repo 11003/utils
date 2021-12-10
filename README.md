@@ -585,6 +585,14 @@ export function convertKey(arr) {
 
 ## DOM类
 
+### 获取元素
+
+```js
+export function $(selector) {
+    return document.querySelector(selector)
+}
+```
+
 ### 跳转到某个元素
 
 别名：滚动到某个div
