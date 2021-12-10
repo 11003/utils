@@ -10,7 +10,7 @@
     - [downFile文件下载](#downFile文件下载)
     - [生成随机数](#生成随机数)
     - [复制](#复制)
-    - [loadScript](#loadScript)
+    - [loadScript加载脚本](#loadScript)
     - [历史记录](#历史记录)
     - [防抖](#防抖)
     - [获取地址栏参数](#获取地址栏参数)
