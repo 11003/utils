@@ -569,6 +569,96 @@ export function uuid() {
 
 > 包含了数组、字符串、对象的操作方法
 
+### 类型判断
+
+```js
+/**
+ * 是否是对象
+ * @param input
+ * @returns {boolean}
+ */
+export function isObject(input) {
+  return Object.prototype.toString.call(input) === '[object Object]';
+}
+```
+
+```js
+/**
+ * 是否是数组
+ * @param input
+ * @returns {boolean}
+ */
+export function isArray(input) {
+  return input instanceof Array || Object.prototype.toString.call(input) === '[object Array]';
+}
+```
+
+```js
+/**
+ * 是否是时间类型
+ * @param input
+ * @returns {boolean}
+ */
+export function isDate(input) {
+  return input instanceof Date || Object.prototype.toString.call(input) === '[object Date]';
+}
+```
+
+```js
+/**
+ * 是否是数字
+ * @param input
+ * @returns {boolean}
+ */
+export function isNumber(input) {
+  return input instanceof Number || Object.prototype.toString.call(input) === '[object Number]';
+}
+```
+
+```js
+/**
+ * 是否是字符串
+ * @param input
+ * @returns {boolean}
+ */
+export function isString(input) {
+  return input instanceof String || Object.prototype.toString.call(input) === '[object String]';
+}
+```
+
+```js
+/**
+ * 是否是布尔值
+ * @param input
+ * @returns {boolean}
+ */
+export function isBoolean(input) {
+  return typeof input == 'boolean';
+}
+```
+
+```js
+/**
+ * 是否是方法
+ * @param input
+ * @returns {boolean}
+ */
+export function isFunction(input) {
+  return typeof input == 'function';
+}
+```
+
+```js
+/**
+ * 是否为空
+ * @param input
+ * @returns {boolean}
+ */
+export function isNull(input) {
+  return input === undefined || input === null;
+}
+```
+
 ### 修改数组里对象的key
 
 别名：修改数组里对象的键名
