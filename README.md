@@ -16,6 +16,7 @@
     - [获取地址栏参数](#获取地址栏参数)
     - [base64转换为文件](#base64转换为文件)
     - [图片转换为base64](#图片转换为base64)
+    - [uuid生成唯一值](#uuid生成唯一值)
 
 - [方法类](#方法类)
     - [修改数组里对象的key](#修改数组里对象的key)
@@ -542,6 +543,25 @@ export function getImgToBase64(url, callback, outputFormat) {
         canvas = null
     }
     img.src = url
+}
+```
+
+### uuid生成唯一值
+
+```js
+console.log(uuid()) // dec79cc2-ecf7-ec28-4b34-678b60ab37da
+```
+
+```js
+/**
+ * 生成唯一值
+ * @returns {string}
+ */
+export function uuid() {
+  const s4 = ( )=> {
+    return Math.floor(( 1 + Math.random()) * 0x10000).toString(16).substring(1);
+  };
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
 ```
 
