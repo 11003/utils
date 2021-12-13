@@ -2,10 +2,6 @@
 
 - [工具类](#工具类)
     - [PC端判断](#PC端判断)
-    - [获取当前周几](#获取当前周几)
-    - [时间问候语](#时间问候语)
-    - [Date时间转数字](#Date时间转数字)
-    - [Date时间转汉字](#Date时间转汉字)
     - [价钱格式化](#价钱格式化)
     - [downFile文件下载](#downFile文件下载)
     - [生成随机数](#生成随机数)
@@ -17,15 +13,30 @@
     - [base64转换为文件](#base64转换为文件)
     - [图片转换为base64](#图片转换为base64)
     - [uuid生成唯一值](#uuid生成唯一值)
+    - [大小写转换或首字母](#大小写转换或首字母)
+    - [将阿拉伯数字翻译成中文的大写数字](#将阿拉伯数字翻译成中文的大写数字)
+    - [将数字转换为大写金额](#将数字转换为大写金额)
+
+- [时间类](#时间类)
+    - [获取当前周几](#获取当前周几)
+    - [时间问候语](#时间问候语)
+    - [Date时间转数字](#Date时间转数字)
+    - [Date时间转汉字](#Date时间转汉字)
+    - [获取某月有多少天](#获取某月有多少天)
+    - [获取某年的第一天](#获取某年的第一天)
+    - [获取某年最后一天](#获取某年最后一天)
+    - [获取某个日期是当年中的第几天](#获取某个日期是当年中的第几天)
+    - [获取某个日期在这一年的第几周](#获取某个日期在这一年的第几周)
 
 - [方法类](#方法类)
     - [修改数组里对象的key](#修改数组里对象的key)
     - [类型判断(字符串、数组、对象等)](#类型判断)
-    
+
 - [DOM类](#DOM类)
     - [获取元素](#获取元素)
     - [跳转到某个元素](#跳转到某个元素)
     - [切换元素](#切换元素)
+    - [获取兄弟节点](#获取兄弟节点)
     - [判断是否存在Class](#判断是否存在Class)
     - [添加Class](#添加Class)
     - [删除Class](#删除Class)
@@ -60,161 +71,6 @@ export function isPc() {
         }
     }
     return flag;
-}
-```
-
-### 获取当前周几
-
-别名：今天星期几
-
-```js
-getDayText() //五
-```
-
-```js
-/**
- * 获取当前日期
- * @param date
- * @returns {string}
- */
-export const getDayText = (date = new Date()) => {
-        if (typeof (date) === 'number') {
-            date = new Date(date);
-        } else if (typeof (date) === 'string') {
-            date = new Date(date.replace(/-/g, '/').replace(/\./g, '/'));
-        }
-        return '日一二三四五六'.charAt(date.getDay());
-    };
-```
-
-### 时间问候语
-
-别名：good morning
-
-```js
-/**
- * 时间问候语
- * @returns {string}
- */
-export const greetTime = () => {
-        const time = new Date();
-        const hour = time.getHours();
-        return hour < 9 ? '早上好' : hour <= 11 ? '上午好' : hour <= 13 ? '中午好' : hour < 20 ? '下午好' : '晚上好'
-    }
-```
-
-### Date时间转数字
-
-别名：时间转数字格式、时间戳
-
-```js
-parseTime(new Date(), '{y}{m}{d}') // 20211221
-```
-
-```js
-/**
- * 时间转数字
- * @param time new Date()
- * @param cFormat 显示的格式
- * @returns {string|null}
- */
-export function parseTime(time, cFormat) {
-    if (arguments.length === 0 || !time) {
-        return null;
-    }
-    const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}';
-    let date;
-    if (typeof time === 'object') {
-        date = time;
-    } else {
-        if (typeof time === 'string') {
-            if (/^[0-9]+$/.test(time)) {
-                time = parseInt(time);
-            } else {
-                // support safari
-                // https://stackoverflow.com/questions/4310953/invalid-date-in-safari
-                time = time.replace(new RegExp(/-/gm), '/');
-            }
-        }
-
-        if (typeof time === 'number' && time.toString().length === 10) {
-            time = time * 1000;
-        }
-        date = new Date(time);
-    }
-    const formatObj = {
-        y: date.getFullYear(),
-        m: date.getMonth() + 1,
-        d: date.getDate(),
-        h: date.getHours(),
-        i: date.getMinutes(),
-        s: date.getSeconds(),
-        a: date.getDay(),
-    };
-    const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
-        const value = formatObj[key];
-        // Note: getDay() returns 0 on Sunday
-        if (key === 'a') {
-            return ['日', '一', '二', '三', '四', '五', '六'][value];
-        }
-        return value.toString().padStart(2, '0');
-    });
-    return time_str;
-}
-```
-
-### Date时间转汉字
-
-别名：时间转汉字、时间戳
-
-```js
-formatTime(new Date()) // 刚刚
-```
-
-```js
-/**
- * 时间转汉字
- * @param time
- * @param option
- * @returns {string}
- */
-export function formatTime(time, option) {
-    if (('' + time).length === 10) {
-        time = parseInt(time) * 1000
-    } else {
-        time = +time
-    }
-    const d = new Date(time)
-    const now = Date.now()
-
-    const diff = (now - d) / 1000
-
-    if (diff < 30) {
-        return '刚刚'
-    } else if (diff < 3600) {
-        // less 1 hour
-        return Math.ceil(diff / 60) + '分钟前'
-    } else if (diff < 3600 * 24) {
-        return Math.ceil(diff / 3600) + '小时前'
-    } else if (diff < 3600 * 24 * 2) {
-        return '1天前'
-    }
-    if (option) {
-        // 必须使用 [ parseTime ] 这个函数
-        // return parseTime(time, option)
-    } else {
-        return (
-            d.getMonth() +
-            1 +
-            '月' +
-            d.getDate() +
-            '日' +
-            d.getHours() +
-            '时' +
-            d.getMinutes() +
-            '分'
-        )
-    }
 }
 ```
 
@@ -259,10 +115,10 @@ export function downFile(url, saveName) {
     if (typeof url == 'object' && url instanceof Blob) {
         url = URL.createObjectURL(url); // 创建blob地址
     }
-    var aLink = document.createElement('a');
+    let aLink = document.createElement('a');
     aLink.href = url;
     aLink.download = saveName || ''; // HTML5新增的属性，指定保存文件名，可以不要后缀，注意，file:///模式下不会生效
-    var event;
+    let event;
     if (window.MouseEvent) {
         event = new MouseEvent('click');
     } else {
@@ -559,10 +415,541 @@ console.log(uuid()) // dec79cc2-ecf7-ec28-4b34-678b60ab37da
  * @returns {string}
  */
 export function uuid() {
-  const s4 = ( )=> {
-    return Math.floor(( 1 + Math.random()) * 0x10000).toString(16).substring(1);
-  };
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+    const s4 = () => {
+        return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+    };
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
+```
+
+### 大小写转换或首字母
+
+```js
+changeBigSmallCase('Hello', 5); // hello 
+```
+
+```js
+/**
+ * @param str
+ * @param type 1:首字母大写  2:首页母小写  3:大小写转换  4:全部大写  5:全部小写
+ * @returns {string|*}
+ */
+export function changeBigSmallCase(str, type) {
+    type = type || 4
+    switch (type) {
+        case 1:
+            return str.replace(/\b\w+\b/g, function (word) {
+                return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+
+            });
+        case 2:
+            return str.replace(/\b\w+\b/g, function (word) {
+                return word.substring(0, 1).toLowerCase() + word.substring(1).toUpperCase();
+            });
+        case 3:
+            return str.split('').map(function (word) {
+                if (/[a-z]/.test(word)) {
+                    return word.toUpperCase();
+                } else {
+                    return word.toLowerCase()
+                }
+            }).join('')
+        case 4:
+            return str.toUpperCase();
+        case 5:
+            return str.toLowerCase();
+        default:
+            return str;
+    }
+}
+```
+
+### 将阿拉伯数字翻译成中文的大写数字
+
+```js
+numberToChinese('10') // 十
+```
+
+```js
+/**
+ * 将阿拉伯数字翻译成中文的大写数字
+ * @param num
+ * @returns {string}
+ */
+export function numberToChinese(num) {
+    let AA = new Array("零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十");
+    let BB = new Array("", "十", "百", "仟", "萬", "億", "点", "");
+    let a = ("" + num).replace(/(^0*)/g, "").split("."),
+        k = 0,
+        re = "";
+    for (let i = a[0].length - 1; i >= 0; i--) {
+        switch (k) {
+            case 0:
+                re = BB[7] + re;
+                break;
+            case 4:
+                if (!new RegExp("0{4}//d{" + (a[0].length - i - 1) + "}$")
+                    .test(a[0]))
+                    re = BB[4] + re;
+                break;
+            case 8:
+                re = BB[5] + re;
+                BB[7] = BB[5];
+                k = 0;
+                break;
+        }
+        if (k % 4 == 2 && a[0].charAt(i + 2) != 0 && a[0].charAt(i + 1) == 0)
+            re = AA[0] + re;
+        if (a[0].charAt(i) != 0)
+            re = AA[a[0].charAt(i)] + BB[k % 4] + re;
+        k++;
+    }
+
+    if (a.length > 1) // 加上小数部分(如果有小数部分)
+    {
+        re += BB[6];
+        for (let i = 0; i < a[1].length; i++)
+            re += AA[a[1].charAt(i)];
+    }
+    if (re == '一十')
+        re = "十";
+    if (re.match(/^一/) && re.length == 3)
+        re = re.replace("一", "");
+    return re;
+}
+```
+
+### 将数字转换为大写金额
+
+```js
+console.log(changeToChinese('1000')) // 壹仟元整
+```
+
+```js
+/**
+ * 将数字转换为大写金额
+ * @param Num
+ * @returns {string}
+ */
+export function changeToChinese(Num) {
+    //判断如果传递进来的不是字符的话转换为字符
+    if (typeof Num == "number") {
+        Num = new String(Num);
+    }
+    ;
+    Num = Num.replace(/,/g, "") //替换tomoney()中的“,”
+    Num = Num.replace(/ /g, "") //替换tomoney()中的空格
+    Num = Num.replace(/￥/g, "") //替换掉可能出现的￥字符
+    if (isNaN(Num)) { //验证输入的字符是否为数字
+        //alert("请检查小写金额是否正确");
+        return "";
+    }
+    ;
+    //字符处理完毕后开始转换，采用前后两部分分别转换
+    let part = String(Num).split(".");
+    let newchar = "";
+    //小数点前进行转化
+    for (let i = part[0].length - 1; i >= 0; i--) {
+        if (part[0].length > 10) {
+            return "";
+            //若数量超过拾亿单位，提示
+        }
+        let tmpnewchar = ""
+        let perchar = part[0].charAt(i);
+        switch (perchar) {
+            case "0":
+                tmpnewchar = "零" + tmpnewchar;
+                break;
+            case "1":
+                tmpnewchar = "壹" + tmpnewchar;
+                break;
+            case "2":
+                tmpnewchar = "贰" + tmpnewchar;
+                break;
+            case "3":
+                tmpnewchar = "叁" + tmpnewchar;
+                break;
+            case "4":
+                tmpnewchar = "肆" + tmpnewchar;
+                break;
+            case "5":
+                tmpnewchar = "伍" + tmpnewchar;
+                break;
+            case "6":
+                tmpnewchar = "陆" + tmpnewchar;
+                break;
+            case "7":
+                tmpnewchar = "柒" + tmpnewchar;
+                break;
+            case "8":
+                tmpnewchar = "捌" + tmpnewchar;
+                break;
+            case "9":
+                tmpnewchar = "玖" + tmpnewchar;
+                break;
+        }
+        switch (part[0].length - i - 1) {
+            case 0:
+                tmpnewchar = tmpnewchar + "元";
+                break;
+            case 1:
+                if (perchar != 0) tmpnewchar = tmpnewchar + "拾";
+                break;
+            case 2:
+                if (perchar != 0) tmpnewchar = tmpnewchar + "佰";
+                break;
+            case 3:
+                if (perchar != 0) tmpnewchar = tmpnewchar + "仟";
+                break;
+            case 4:
+                tmpnewchar = tmpnewchar + "万";
+                break;
+            case 5:
+                if (perchar != 0) tmpnewchar = tmpnewchar + "拾";
+                break;
+            case 6:
+                if (perchar != 0) tmpnewchar = tmpnewchar + "佰";
+                break;
+            case 7:
+                if (perchar != 0) tmpnewchar = tmpnewchar + "仟";
+                break;
+            case 8:
+                tmpnewchar = tmpnewchar + "亿";
+                break;
+            case 9:
+                tmpnewchar = tmpnewchar + "拾";
+                break;
+        }
+        let newchar = tmpnewchar + newchar;
+    }
+    //小数点之后进行转化
+    if (Num.indexOf(".") != -1) {
+        if (part[1].length > 2) {
+            // alert("小数点之后只能保留两位,系统将自动截断");
+            part[1] = part[1].substr(0, 2)
+        }
+        for (i = 0; i < part[1].length; i++) {
+            tmpnewchar = ""
+            perchar = part[1].charAt(i)
+            switch (perchar) {
+                case "0":
+                    tmpnewchar = "零" + tmpnewchar;
+                    break;
+                case "1":
+                    tmpnewchar = "壹" + tmpnewchar;
+                    break;
+                case "2":
+                    tmpnewchar = "贰" + tmpnewchar;
+                    break;
+                case "3":
+                    tmpnewchar = "叁" + tmpnewchar;
+                    break;
+                case "4":
+                    tmpnewchar = "肆" + tmpnewchar;
+                    break;
+                case "5":
+                    tmpnewchar = "伍" + tmpnewchar;
+                    break;
+                case "6":
+                    tmpnewchar = "陆" + tmpnewchar;
+                    break;
+                case "7":
+                    tmpnewchar = "柒" + tmpnewchar;
+                    break;
+                case "8":
+                    tmpnewchar = "捌" + tmpnewchar;
+                    break;
+                case "9":
+                    tmpnewchar = "玖" + tmpnewchar;
+                    break;
+            }
+            if (i == 0) tmpnewchar = tmpnewchar + "角";
+            if (i == 1) tmpnewchar = tmpnewchar + "分";
+            newchar = newchar + tmpnewchar;
+        }
+    }
+    //替换所有无用汉字
+    while (newchar.search("零零") != -1)
+        newchar = newchar.replace("零零", "零");
+    newchar = newchar.replace("零亿", "亿");
+    newchar = newchar.replace("亿万", "亿");
+    newchar = newchar.replace("零万", "万");
+    newchar = newchar.replace("零元", "元");
+    newchar = newchar.replace("零角", "");
+    newchar = newchar.replace("零分", "");
+    if (newchar.charAt(newchar.length - 1) == "元") {
+        newchar = newchar + "整"
+    }
+    return newchar;
+}
+```
+
+## 时间类
+
+### 获取当前周几
+
+别名：今天星期几
+
+```js
+getDayText() //五
+```
+
+```js
+/**
+ * 获取当前日期
+ * @param date
+ * @returns {string}
+ */
+export const getDayText = (date = new Date()) => {
+        if (typeof (date) === 'number') {
+            date = new Date(date);
+        } else if (typeof (date) === 'string') {
+            date = new Date(date.replace(/-/g, '/').replace(/\./g, '/'));
+        }
+        return '日一二三四五六'.charAt(date.getDay());
+    };
+```
+
+### 时间问候语
+
+别名：good morning
+
+```js
+/**
+ * 时间问候语
+ * @returns {string}
+ */
+export const greetTime = () => {
+        const time = new Date();
+        const hour = time.getHours();
+        return hour < 9 ? '早上好' : hour <= 11 ? '上午好' : hour <= 13 ? '中午好' : hour < 20 ? '下午好' : '晚上好'
+    }
+```
+
+### Date时间转数字
+
+别名：时间转数字格式、时间戳
+
+```js
+parseTime(new Date(), '{y}{m}{d}') // 20211221
+```
+
+```js
+/**
+ * 时间转数字
+ * @param time new Date()
+ * @param cFormat 显示的格式
+ * @returns {string|null}
+ */
+export function parseTime(time, cFormat) {
+    if (arguments.length === 0 || !time) {
+        return null;
+    }
+    const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}';
+    let date;
+    if (typeof time === 'object') {
+        date = time;
+    } else {
+        if (typeof time === 'string') {
+            if (/^[0-9]+$/.test(time)) {
+                time = parseInt(time);
+            } else {
+                // support safari
+                // https://stackoverflow.com/questions/4310953/invalid-date-in-safari
+                time = time.replace(new RegExp(/-/gm), '/');
+            }
+        }
+
+        if (typeof time === 'number' && time.toString().length === 10) {
+            time = time * 1000;
+        }
+        date = new Date(time);
+    }
+    const formatObj = {
+        y: date.getFullYear(),
+        m: date.getMonth() + 1,
+        d: date.getDate(),
+        h: date.getHours(),
+        i: date.getMinutes(),
+        s: date.getSeconds(),
+        a: date.getDay(),
+    };
+    const time_str = format.replace(/{([ymdhisa])+}/g, (result, key) => {
+        const value = formatObj[key];
+        // Note: getDay() returns 0 on Sunday
+        if (key === 'a') {
+            return ['日', '一', '二', '三', '四', '五', '六'][value];
+        }
+        return value.toString().padStart(2, '0');
+    });
+    return time_str;
+}
+```
+
+### Date时间转汉字
+
+别名：时间转汉字、时间戳
+
+```js
+formatTime(new Date()) // 刚刚
+```
+
+```js
+/**
+ * 时间转汉字
+ * @param time
+ * @param option
+ * @returns {string}
+ */
+export function formatTime(time, option) {
+    if (('' + time).length === 10) {
+        time = parseInt(time) * 1000
+    } else {
+        time = +time
+    }
+    const d = new Date(time)
+    const now = Date.now()
+
+    const diff = (now - d) / 1000
+
+    if (diff < 30) {
+        return '刚刚'
+    } else if (diff < 3600) {
+        // less 1 hour
+        return Math.ceil(diff / 60) + '分钟前'
+    } else if (diff < 3600 * 24) {
+        return Math.ceil(diff / 3600) + '小时前'
+    } else if (diff < 3600 * 24 * 2) {
+        return '1天前'
+    }
+    if (option) {
+        // 必须使用 [ parseTime ] 这个函数
+        // return parseTime(time, option)
+    } else {
+        return (
+            d.getMonth() +
+            1 +
+            '月' +
+            d.getDate() +
+            '日' +
+            d.getHours() +
+            '时' +
+            d.getMinutes() +
+            '分'
+        )
+    }
+}
+```
+
+### 获取某月有多少天
+
+```js
+console.log(getMonthOfDay('2021-2')) // 28
+console.log(getMonthOfDay()) // 当前为2021-12月，即得到的是30
+```
+
+```js
+/**
+ * 获取某月有多少天
+ * @param time
+ * @returns {number}
+ */
+export function getMonthOfDay(time) {
+    let date = new Date(time);
+    let year = date.getFullYear();
+    let mouth = date.getMonth() + 1;
+    let days;
+
+    let timeArr = [1, 3, 5, 7, 8, 9, 10, 12]
+    //当月份为二月时，根据闰年还是非闰年判断天数
+    if (mouth === 2) {
+        days = year % 4 === 0 ? 29 : 28
+    } else if (timeArr.includes(mouth)) {
+        //月份为：1,3,5,7,8,10,12 时，为大月.则天数为31；
+        days = 31
+    } else {
+        //其他月份，天数为：30.
+        days = 30
+    }
+    return days
+}
+```
+
+### 获取某年的第一天
+
+```js
+console.log(getFirstDayOfYear('2021')) // 2021-01-01 00:00:00
+```
+
+```js
+/**
+ * 获取某年的第一天
+ * @param time
+ * @returns {string}
+ */
+export function getFirstDayOfYear(time) {
+    let year = new Date(time).getFullYear();
+    return year + "-01-01 00:00:00";
+}
+```
+
+### 获取某年最后一天
+
+```js
+console.log(getLastDayOfYear('2021')) // 2021-12-31 23:59:59
+```
+
+```js
+/**
+ * 获取某年最后一天
+ * @param time
+ * @returns {string}
+ */
+export function getLastDayOfYear(time) {
+    let year = new Date(time).getFullYear();
+    let dateString = year + "-12-01 00:00:00";
+    // 要配合 [ getMonthOfDay ] 这个方法使用
+    let endDay = getMonthOfDay(dateString);
+    return year + "-12-" + endDay + " 23:59:59";
+}
+```
+
+### 获取某个日期是当年中的第几天
+
+```js
+console.log(getDayOfYear('2021-12-13')) // 347
+```
+
+```js
+/**
+ * 获取某个日期是当年中的第几天
+ * @param time
+ * @returns {number}
+ */
+export function getDayOfYear(time) {
+    // 要配合 [ getFirstDayOfYear ] 这个方法使用
+    let firstDayYear = getFirstDayOfYear(time);
+    let numSecond = (new Date(time).getTime() - new Date(firstDayYear).getTime()) / 1000;
+    return Math.ceil(numSecond / (24 * 3600));
+}
+```
+
+### 获取某个日期在这一年的第几周
+
+```js
+console.log(getDayOfYearWeek('2021-12-31')) // 53
+```
+
+```js
+/**
+ * 获取某个日期在这一年的第几周
+ * @param time
+ * @returns {number}
+ */
+export function getDayOfYearWeek(time) {
+    // 要配合 [ getDayOfYear ] 这个方法使用
+    let numDays = getDayOfYear(time);
+    return Math.ceil(numDays / 7);
 }
 ```
 
@@ -579,7 +966,7 @@ export function uuid() {
  * @returns {boolean}
  */
 export function isObject(input) {
-  return Object.prototype.toString.call(input) === '[object Object]';
+    return Object.prototype.toString.call(input) === '[object Object]';
 }
 ```
 
@@ -590,7 +977,7 @@ export function isObject(input) {
  * @returns {boolean}
  */
 export function isArray(input) {
-  return input instanceof Array || Object.prototype.toString.call(input) === '[object Array]';
+    return input instanceof Array || Object.prototype.toString.call(input) === '[object Array]';
 }
 ```
 
@@ -601,7 +988,7 @@ export function isArray(input) {
  * @returns {boolean}
  */
 export function isDate(input) {
-  return input instanceof Date || Object.prototype.toString.call(input) === '[object Date]';
+    return input instanceof Date || Object.prototype.toString.call(input) === '[object Date]';
 }
 ```
 
@@ -612,7 +999,7 @@ export function isDate(input) {
  * @returns {boolean}
  */
 export function isNumber(input) {
-  return input instanceof Number || Object.prototype.toString.call(input) === '[object Number]';
+    return input instanceof Number || Object.prototype.toString.call(input) === '[object Number]';
 }
 ```
 
@@ -623,7 +1010,7 @@ export function isNumber(input) {
  * @returns {boolean}
  */
 export function isString(input) {
-  return input instanceof String || Object.prototype.toString.call(input) === '[object String]';
+    return input instanceof String || Object.prototype.toString.call(input) === '[object String]';
 }
 ```
 
@@ -634,7 +1021,7 @@ export function isString(input) {
  * @returns {boolean}
  */
 export function isBoolean(input) {
-  return typeof input == 'boolean';
+    return typeof input == 'boolean';
 }
 ```
 
@@ -645,7 +1032,7 @@ export function isBoolean(input) {
  * @returns {boolean}
  */
 export function isFunction(input) {
-  return typeof input == 'function';
+    return typeof input == 'function';
 }
 ```
 
@@ -656,7 +1043,7 @@ export function isFunction(input) {
  * @returns {boolean}
  */
 export function isNull(input) {
-  return input === undefined || input === null;
+    return input === undefined || input === null;
 }
 ```
 
@@ -701,7 +1088,16 @@ export function convertKey(arr) {
 
 ```js
 export function $(selector) {
-    return document.querySelector(selector)
+    let type = selector.substring(0, 1);
+    if (type === '#') {
+        if (document.querySelecotor) return document.querySelector(selector)
+        return document.getElementById(selector.substring(1))
+    } else if (type === '.') {
+        if (document.querySelecotorAll) return document.querySelectorAll(selector)
+        return document.getElementsByClassName(selector.substring(1))
+    } else {
+        return document['querySelectorAll' ? 'querySelectorAll' : 'getElementsByTagName'](selector)
+    }
 }
 ```
 
@@ -769,6 +1165,25 @@ export function toggleClass(element, className) {
             classString.substr(nameIndex + className.length)
     }
     element.className = classString
+}
+```
+
+### 获取兄弟节点
+
+```js
+/**
+ * 获取兄弟节点
+ * @param ele
+ * @returns {[]}
+ */
+export function siblings(ele) {
+    let chid = ele.parentNode.children, eleMatch = [];
+    for (let i = 0, len = chid.length; i < len; i++) {
+        if (chid[i] != ele) {
+            eleMatch.push(chid[i]);
+        }
+    }
+    return eleMatch;
 }
 ```
 
