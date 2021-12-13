@@ -27,6 +27,7 @@
     - [获取某年最后一天](#获取某年最后一天)
     - [获取某个日期是当年中的第几天](#获取某个日期是当年中的第几天)
     - [获取某个日期在这一年的第几周](#获取某个日期在这一年的第几周)
+    - [把秒转化为天小时分钟秒](#把秒转化为天小时分钟秒)
 
 - [方法类](#方法类)
     - [根据pid生成树形结构](#根据pid生成树形结构)
@@ -956,6 +957,37 @@ export function getDayOfYearWeek(time) {
 }
 ```
 
+### 把秒转化为天小时分钟秒
+
+```js
+sToHs(60) // 1分钟0秒
+```
+
+```js
+/**
+ * 把秒转化为天小时分钟秒
+ * @param seconds
+ * @returns {string}
+ */
+export function sToHs(seconds){
+  let daySec = 24 *  60 * 60;
+  let hourSec=  60 * 60;
+  let minuteSec = 60;
+  let dd = Math.floor(seconds / daySec);
+  let hh = Math.floor((seconds % daySec) / hourSec);
+  let mm = Math.floor((seconds % hourSec) / minuteSec);
+  let ss = seconds%minuteSec;
+  if(dd > 0) {
+    return dd + "天" + hh + "小时" + mm + "分钟"+ss+"秒";
+  } else if (hh > 0) {
+    return hh + "小时" + mm + "分钟"+ss+"秒";
+  } else if (mm > 0) {
+    return mm + "分钟"+ss+"秒";
+  } else {
+    return ss+"秒";
+  }
+}
+```
 ## 方法类
 
 > 包含了数组、字符串、对象的操作方法
