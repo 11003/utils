@@ -44,6 +44,7 @@
     - [判断是否存在Class](#判断是否存在Class)
     - [添加Class](#添加Class)
     - [删除Class](#删除Class)
+    - [创建a标签打开新页面（解决会被浏览器阻止的问题）](#创建a标签打开新页面)
 
 ## 使用方法
 
@@ -1375,5 +1376,22 @@ export function removeClass(ele, cls) {
         const reg = new RegExp('(\\s|^)' + cls + '(\\s|$)')
         ele.className = ele.className.replace(reg, ' ')
     }
+}
+```
+
+### 创建a标签打开新页面
+
+```js
+/**
+ * window.open(url)打开链接被浏览器拦截解决方案
+ * @param url
+ */
+export function addBlankPath(url) {
+    const a = document.createElement('a')
+    a.href = url  // 窗口的链接
+    a.target = '_blank'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
 }
 ```
