@@ -1381,6 +1381,8 @@ export function removeClass(ele, cls) {
 
 ### 创建a标签打开新页面
 
+> 别名：window.open被浏览器拦截
+
 ```js
 /**
  * window.open(url)打开链接被浏览器拦截解决方案
