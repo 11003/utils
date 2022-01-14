@@ -57,7 +57,7 @@ import { 方法名称 } from "@/utils";
 ### PC端判断
 
 ```js
-if (isPc) alert('这是PC端');
+if (isPc()) alert('这是PC端');
 ```
 
 ```js
