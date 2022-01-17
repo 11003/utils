@@ -16,6 +16,7 @@
     - [大小写转换或首字母](#大小写转换或首字母)
     - [将阿拉伯数字翻译成中文的大写数字](#将阿拉伯数字翻译成中文的大写数字)
     - [将数字转换为大写金额](#将数字转换为大写金额)
+    - [el-input只能输入金额](#el-input只能输入金额)
 
 - [时间类](#时间类)
     - [获取当前周几](#获取当前周几)
@@ -687,6 +688,12 @@ export function changeToChinese(Num) {
     }
     return newchar;
 }
+```
+
+### el-input只能输入金额
+
+```js
+<el-input v-model="kanFrom.price" :placeholder="请输入" @input="(v) => (kanFrom.price = v.replace(/[^\d.]/g,'').replace(/\.{2,}/g, '.').replace(/^(\d+)\.(\d\d).*$/, '$1.$2'))"/>
 ```
 
 ## 时间类
