@@ -16,7 +16,6 @@
     - [大小写转换或首字母](#大小写转换或首字母)
     - [将阿拉伯数字翻译成中文的大写数字](#将阿拉伯数字翻译成中文的大写数字)
     - [将数字转换为大写金额](#将数字转换为大写金额)
-    - [el-input只能输入金额](#el-input只能输入金额)
 
 - [时间类](#时间类)
     - [获取当前周几](#获取当前周几)
@@ -32,6 +31,7 @@
 
 - [方法类](#方法类)
     - [根据pid生成树形结构](#根据pid生成树形结构)
+    - [根据时间生成树形结构](#根据时间生成树形结构)
     - [寻找所有子节点](#寻找所有子节点)
     - [类型判断(字符串、数组、对象等)](#类型判断)
     - [修改数组里对象的key](#修改数组里对象的key)
@@ -58,7 +58,7 @@ import { 方法名称 } from "@/utils";
 ### PC端判断
 
 ```js
-if (isPc()) alert('这是PC端');
+if (isPc) alert('这是PC端');
 ```
 
 ```js
@@ -690,12 +690,6 @@ export function changeToChinese(Num) {
 }
 ```
 
-### el-input只能输入金额
-
-```js
-<el-input v-model="kanFrom.price" :placeholder="请输入" @input="(v) => (kanFrom.price = v.replace(/[^\d.]/g,'').replace(/\.{2,}/g, '.').replace(/^(\d+)\.(\d\d).*$/, '$1.$2'))"/>
-```
-
 ## 时间类
 
 ### 获取当前周几
@@ -1012,6 +1006,48 @@ export function sToHs(seconds){
 export const createTree = (items, id = null, link = 'pid') =>{
     items.filter(item => item[link] === id).map(item => ({ ...item, children: createTree(items, item.id) }));
 };
+```
+
+### 根据时间生成树形结构
+
+```js
+// 原始数据
+let data = [
+  {
+      created_at: '"2022-01-24 18:25:43',
+      title: 'title'
+  }
+]
+
+// 想要的结果
+let newData = [
+  {
+      time: '2022',
+      lists: [
+        {
+          created_at: '"2022-01-24 18:25:43',
+          title: 'title'  
+        }
+      ]
+  }
+]
+```
+
+```js
+/**
+ * 列表用时间生成树
+ * @param data
+ * @returns {{lists: *, time: string}[]}
+ */
+export function timeTree(data) {
+	const group = data.reduce((obj, item) => {
+		const year = item.created_at.substring(0, 4) // 2021-01-24 18:25:43 变为 2021
+		if (!obj[year]) obj[year] = []
+		obj[year].push(item)
+		return obj
+	}, {})
+	return Object.keys(group).map(key => ({ time: key, lists: group[key] }))
+}
 ```
 
 ### 寻找所有子节点
