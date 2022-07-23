@@ -16,6 +16,8 @@
     - [大小写转换或首字母](#大小写转换或首字母)
     - [将阿拉伯数字翻译成中文的大写数字](#将阿拉伯数字翻译成中文的大写数字)
     - [将数字转换为大写金额](#将数字转换为大写金额)
+    - [富文本代码块右上角显示复制按钮](#富文本代码块右上角显示复制按钮)
+    - [图片懒加载](#图片懒加载)
 
 - [时间类](#时间类)
     - [获取当前周几](#获取当前周几)
@@ -705,6 +707,106 @@ export function changeToChinese(Num) {
     }
     return newchar;
 }
+```
+
+### 富文本代码块右上角显示复制按钮
+
+```js
+onMounted(() => {
+    codeCopy() // 代码块复制
+})
+```
+
+```js
+const COPY = 'copy'
+const COPIED = 'copied'
+function codeCopy() {
+    if (typeof document === 'undefined') return; // 解决 document is not defined 的bug
+    const preCode = document.querySelectorAll('pre code');
+    if(!preCode) return
+    Array.prototype.forEach.call(preCode, function(item) {
+        const spanEl = document.createElement("span");
+        spanEl.className = 'code-copy';
+        spanEl.innerText = COPY;
+        item.parentNode.setAttribute('class','copy-box');
+        item.parentNode.appendChild(spanEl)
+    })
+    //markdown 代码存放在pre code 标签对中
+    const codeCopyHandler = document.querySelectorAll('pre.copy-box .code-copy')
+    Array.prototype.forEach.call(codeCopyHandler, function(itemCopyBox) {
+        itemCopyBox.onclick = function (el) {
+            if(el.target.innerText === COPIED) return;
+            let text = el.target.previousSibling.textContent || el.target.previousSibling.value;
+            const textareaEl = document.createElement("textarea");
+            textareaEl.textContent = text;
+            document.body.appendChild(textareaEl)
+            textareaEl.select();
+            document.execCommand('Copy',true)
+            textareaEl.remove()
+            el.target.innerText = COPIED
+            setTimeout(() => {
+                el.target.innerText = COPY
+            },1000)
+        }
+    })
+}
+
+export default codeCopy;
+```
+
+### 图片懒加载
+
+```js
+import lazyLoad from "@/plugins/lazy-load-img"
+
+onMounted(() => {
+    lazyLoad() // 图片懒加载
+    window.addEventListener('scroll',handleScroll,false)
+})
+onUnmounted(() => {
+    window.removeEventListener('scroll',handleScroll,false)
+})
+function handleScroll() {
+    lazyLoad()
+}
+```
+
+```js
+/**
+ * 图片懒加载
+ */
+const lazyLoadImg = () => {
+    let viewHeight = document.documentElement.clientHeight
+    let limg = document.querySelectorAll("img[data-src]")
+    console.log(`limg===>`, limg)
+    Array.prototype.forEach.call(limg, function (item, index) {
+        let rect;
+        if (item.getAttribute("data-src") === "") return
+        //getBoundingClientRect
+        rect = item.getBoundingClientRect();
+        if (rect.bottom >= 0 && rect.top < viewHeight) {
+            (function () {
+                let img = new Image()
+                img.src = item.getAttribute("data-src")
+                item.src = img.src
+                item.removeAttribute('data-src')
+                item.setAttribute("class","loaded")
+            })()
+        }
+    })
+}
+// 定义一个防抖函数
+const debounce = (fn, delay = 500) => {
+    let timer = null;
+    return function (...args) {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn.apply(this, args);
+        }, delay);
+    };
+}
+const lazyLoad = debounce(lazyLoadImg)
+export default lazyLoad
 ```
 
 ## 时间类
