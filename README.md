@@ -126,50 +126,56 @@ function format2(number) {
 别名：前端下载图片
 
 ```js
-let url = "https://avuejs.com/images/logo-bg.jpg";
-downLoad('logo',url);
+let urlVal = "https://avuejs.com/images/logo-bg.jpg";
+let data = {
+    url: urlVal,
+    width: 300,
+    height: 300,
+    urlName: '图片名字',
+}
+downLoadImgByUrl(data)
 ```
 
 ```js
 /**
- * 获取图片的 base64 编码 DataURL
- * @param image JS 图像对象
- * @return {string} 已编码的 DataURL
+ * 下载图片到本地，可适用于移动端
  */
-function getImageDataURL(image) {
-    // 创建画布
-    const canvas = document.createElement('canvas');
-    canvas.width = image.width;
-    canvas.height = image.height;
-    const ctx = canvas.getContext('2d');
-    // 以图片为背景剪裁画布
-    ctx.drawImage(image, 0, 0, image.width, image.height);
-    // 获取图片后缀名
-    const extension = image.src.substring(image.src.lastIndexOf('.') + 1).toLowerCase();
-    // 某些图片 url 可能没有后缀名，默认是 png
-    return canvas.toDataURL('image/' + extension, 1);
-}
+ const downLoadImgByUrl = ({ url, width, height, urlName }) => {
+    let canvas = document.createElement('CANVAS')
+    let ctx = canvas.getContext('2d')
+    let img = new Image()
+    img.crossOrigin = 'Anonymous'
+    img.onload = function () {
+        let ResWidth
+        let ResHeight
 
-/**
- * 下载图片到本地
- * @param downloadName 下载后的图片名称
- * @param url 图片地址
- */
-function downLoad(downloadName, url) {
-    const tag = document.createElement('a');
-    // 此属性的值就是下载时图片的名称，注意，名称中不能有半角点，否则下载时后缀名会错误
-    tag.setAttribute('download', downloadName.replace(/\./g, '。'));
+        if (width && height) {
+            ResWidth = width
+            ResHeight = height
+        } else if (width) {
+            ResWidth = width
+            ResHeight = img.height * (width / img.width)
+        } else if (height) {
+            ResHeight = height
+            ResWidth = img.width * (height / img.height)
+        } else {
+            ResWidth = img.width
+            ResHeight = img.height
+        }
+        canvas.width = ResWidth
+        canvas.height = ResHeight
+        console.log(ResWidth, ResHeight)
+        ctx.drawImage(img, 0, 0, ResWidth, ResHeight)
 
-    const image = new Image();
-    // 设置 image 的 url, 添加时间戳，防止浏览器缓存图片
-    image.src = url + '?time=' + new Date().getTime();
-    //重要，设置 crossOrigin 属性，否则图片跨域会报错
-    image.setAttribute('crossOrigin', 'Anonymous');
-    // 图片未加载完成时操作会报错
-    image.onload = () => {
-        tag.href = getImageDataURL(image);
-        tag.click();
-    };
+        let saveA = document.createElement('a')
+        document.body.appendChild(saveA)
+        saveA.href = canvas.toDataURL('image/jpeg', 1)
+        saveA.download = urlName?urlName:'mypic' + new Date().getTime()
+        saveA.target = '_blank'
+        saveA.click()
+        canvas = null
+    }
+    img.src = url
 }
 ```
 
