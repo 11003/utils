@@ -18,6 +18,7 @@
     - [将数字转换为大写金额](#将数字转换为大写金额)
     - [富文本代码块右上角显示复制按钮](#富文本代码块右上角显示复制按钮)
     - [图片懒加载](#图片懒加载)
+    - [判断链接是否为本地](#判断链接是否为本地)
 
 - [时间类](#时间类)
     - [获取当前周几](#获取当前周几)
@@ -831,6 +832,16 @@ const debounce = (fn, delay = 500) => {
 }
 const lazyLoad = debounce(lazyLoadImg)
 export default lazyLoad
+```
+
+### 判断链接是否为本地
+
+```js
+export const isLocal = () => {
+  const localURL = /^(192\.168\.\d{1,3}\.\d{1,3})|(localhost)|(172\.16\.\d{1,3}\.\d{1,3})$/;
+  let hostname = window.location.hostname;
+  return localURL.test(hostname)
+}
 ```
 
 ## 时间类
