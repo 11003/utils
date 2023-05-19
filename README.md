@@ -3,7 +3,8 @@
 - [工具类](#工具类)
     - [PC端判断](#PC端判断)
     - [价钱格式化](#价钱格式化)
-    - [downFile文件下载](#downFile文件下载)
+    - [文件下载](#文件下载)
+    - [图片下载](#图片下载)
     - [生成随机数](#生成随机数)
     - [复制](#复制)
     - [loadScript加载脚本](#loadScript)
@@ -122,7 +123,32 @@ function format2(number) {
 }
 ```
 
-### downFile文件下载
+### 文件下载
+
+```js
+download(url,'文件名')
+```
+
+```js
+export const download = (url, fileName) => {
+    const x = new XMLHttpRequest()
+    x.responseType = 'blob'
+    x.open('GET', url, true)
+    x.send()
+    x.onload = () => {
+        const downloadElement = document.createElement('a')
+        const href = window.URL.createObjectURL(x.response) // create download url
+        downloadElement.href = href
+        downloadElement.download = fileName // set filename (include suffix)
+        document.body.appendChild(downloadElement) // append <a>
+        downloadElement.click() // click download
+        document.body.removeChild(downloadElement) // remove <a>
+        window.URL.revokeObjectURL(href) // revoke blob
+    }
+}
+```
+
+### 图片下载
 
 别名：前端下载图片
 
